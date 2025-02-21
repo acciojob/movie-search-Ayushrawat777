@@ -1,14 +1,67 @@
+import React, { useState } from "react";
+import "../styles/App.css";
 
-import React from 'react';
-import "./../styles/App.css";
-import SearchBar from './SearchBar.js';
+const API_KEY = "99eb9fd1"; // OMDb API Key
 
-function App() {
+const App = () => {
+  const [query, setQuery] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [error, setError] = useState("");
+
+  const fetchMovies = async () => {
+    if (!query.trim()) {
+      setError("Please enter a movie name.");
+      setMovies([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.Response === "True") {
+        setMovies(data.Search);
+        setError(""); // Clear errors
+      } else {
+        setMovies([]);
+        setError("Invalid movie name. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Something went wrong. Please try again.");
+    }
+  };
+
   return (
-    <div>
-      <SearchBar />
+    <div className="container">
+      <h1>🎬 Movie Search</h1>
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Search for a movie..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          data-testid="search-bar"
+        />
+        <button onClick={fetchMovies} data-testid="search-button">
+          Search
+        </button>
+      </div>
+
+      {error && <p className="error">{error}</p>}
+
+      <div className="movies">
+        {movies.map((movie) => (
+          <div key={movie.imdbID} className="movie-card">
+            <img src={movie.Poster} alt={movie.Title} />
+            <h3>{movie.Title} ({movie.Year})</h3>
+          </div>
+        ))}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
