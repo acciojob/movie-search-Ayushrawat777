@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/App.css";
 
-const API_KEY = "99eb9fd1"; // OMDb API Key
+const API_KEY = "99eb9fd1"; // Replace with your actual OMDb API Key
 
 const App = () => {
   const [query, setQuery] = useState("");
@@ -23,7 +23,7 @@ const App = () => {
 
       if (data.Response === "True") {
         setMovies(data.Search);
-        setError(""); // Clear errors
+        setError(""); // Clear error
       } else {
         setMovies([]);
         setError("Invalid movie name. Please try again.");
@@ -36,7 +36,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <h1>🎬 Movie Search</h1>
+      <h1>🎬 Search Movie</h1>
       <div className="search-box">
         <input
           type="text"
@@ -50,11 +50,11 @@ const App = () => {
         </button>
       </div>
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error" data-testid="error-message">{error}</p>}
 
       <div className="movies">
         {movies.map((movie) => (
-          <div key={movie.imdbID} className="movie-card">
+          <div key={movie.imdbID} className="movie-card" data-testid="movie-card">
             <img src={movie.Poster} alt={movie.Title} />
             <h3>{movie.Title} ({movie.Year})</h3>
           </div>
